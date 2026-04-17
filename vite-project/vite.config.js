@@ -2,6 +2,10 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  build: {
+    outDir: '../',
+    emptyOutDir: false,
+  },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',

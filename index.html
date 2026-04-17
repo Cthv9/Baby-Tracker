@@ -1,207 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#a3d5ff">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <title>Baby Tracker | By DF</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    .pb-safe {
-      padding-bottom: env(safe-area-inset-bottom, 16px);
-    }
-    .fade {
-      transition: opacity 0.5s ease-in-out;
-    }
-  </style>
-</head>
-<body class="flex flex-col min-h-screen bg-blue-50">
-
-  <!-- Preloader -->
-  <div id="preloader" class="fixed inset-0 bg-blue-100 flex items-center justify-center z-50">
-    <span class="text-2xl font-bold text-blue-500 animate-pulse">Caricamento...</span>
-  </div>
-
-  <main class="flex-1 relative overflow-hidden">
-
-    <!-- Pagina Inserisci -->
-    <section id="pagina-inserisci" class="absolute inset-0 flex flex-col justify-center items-center space-y-6 p-4 fade">
-      <div class="text-gray-1200 text-center mt-4">Inserisci evento:</div>
-      <button onclick="salvaEvento('poppata')" class="bg-blue-500 text-white py-6 px-12 rounded-2xl text-2xl shadow-md">Poppata</button>
-      <button onclick="salvaEvento('ninna')" class="bg-purple-500 text-white py-6 px-12 rounded-2xl text-2xl shadow-md">Ninna</button>
-      <div class="text-gray-500 text-center text-sm mt-4">
-        Poppate oggi: <span id="contatorePoppata">0</span> | Ninne oggi: <span id="contatoreNinna">0</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="description" content="Baby Tracker — Poppate, nanna, pannolini, archivio medico e molto altro." />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Baby Tracker</title>
+    <script type="module" crossorigin src="/assets/index-ByzpfBng.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DN-q00Jg.css">
+  <script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body class="bg-slate-50 text-slate-900 antialiased">
+    <div id="app">
+      <div id="loading" class="fixed inset-0 flex flex-col items-center justify-center bg-indigo-50">
+        <div class="text-5xl mb-4">👶</div>
+        <p class="text-indigo-400 font-medium animate-pulse text-sm tracking-wide">Caricamento...</p>
       </div>
-      <div id="feedback" class="text-green-600 text-center mt-4"></div>
-    </section>
-
-    <!-- Pagina Revisione -->
-    <section id="pagina-revisione" class="absolute inset-0 hidden flex flex-col p-4 bg-blue-50 overflow-y-auto fade">
-      <div class="flex justify-between items-center mb-4">
-        <input type="date" id="filtroData" class="border p-2 rounded" onchange="mostraEventi()">
-        <button onclick="resetStorico()" class="bg-red-400 text-white p-2 rounded">Reset Storico</button>
-      </div>
-      <table class="w-full table-auto text-center">
-        <thead>
-          <tr>
-            <th class="border px-2 py-2">Tipo</th>
-            <th class="border px-2 py-2">Data</th>
-            <th class="border px-2 py-2">Ora</th>
-            <th class="border px-2 py-2">Azioni</th>
-          </tr>
-        </thead>
-        <tbody id="tabellaEventi"></tbody>
-      </table>
-    </section>
-
-  </main>
-
-  <!-- Barra navigazione fissa -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-inner flex justify-around p-2 pb-safe z-50">
-    <button onclick="switchPage(0)" id="btnInserisci" class="flex-1 py-2 text-lg font-semibold text-blue-600">Inserisci</button>
-    <button onclick="switchPage(1)" id="btnRevisione" class="flex-1 py-2 text-lg font-semibold text-gray-600">Revisione</button>
-  </nav>
-
-  <!-- Pulsante installazione App -->
-  <button id="btnInstall" onclick="installApp()" class="hidden fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50">
-    Installa App
-  </button>
-
-  <!-- Script -->
-  <script>
-    let deferredPrompt;
-
-    window.addEventListener('load', () => {
-      document.getElementById('preloader').style.display = 'none';
-    });
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      if (!localStorage.getItem('pwaPromptShown')) {
-        deferredPrompt = e;
-        document.getElementById('btnInstall').classList.remove('hidden');
-      }
-    });
-
-    function installApp() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('✅ Installazione accettata');
-          } else {
-            console.log('❌ Installazione rifiutata');
-          }
-          localStorage.setItem('pwaPromptShown', 'true');
-          deferredPrompt = null;
-          document.getElementById('btnInstall').classList.add('hidden');
-        });
-      }
-    }
-
-    function getEventi() {
-      try {
-        return JSON.parse(localStorage.getItem('eventiBimbo')) || [];
-      } catch {
-        return [];
-      }
-    }
-
-    function setEventi(eventi) {
-      localStorage.setItem('eventiBimbo', JSON.stringify(eventi));
-    }
-
-    function switchPage(index) {
-      const paginaInserisci = document.getElementById('pagina-inserisci');
-      const paginaRevisione = document.getElementById('pagina-revisione');
-
-      if (index === 0) {
-        paginaInserisci.classList.remove('hidden');
-        paginaRevisione.classList.add('hidden');
-      } else {
-        paginaInserisci.classList.add('hidden');
-        paginaRevisione.classList.remove('hidden');
-        mostraEventi();
-      }
-
-      document.getElementById('btnInserisci').classList.toggle('text-blue-600', index === 0);
-      document.getElementById('btnInserisci').classList.toggle('text-gray-600', index !== 0);
-      document.getElementById('btnRevisione').classList.toggle('text-blue-600', index === 1);
-      document.getElementById('btnRevisione').classList.toggle('text-gray-600', index !== 1);
-    }
-
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, (tag) => ({'&':'&amp;','<':'&lt;','>':'&gt;','\'':'&#39;','\"':'&quot;'}[tag]));
-    }
-
-    function salvaEvento(tipo) {
-      const eventi = getEventi();
-      eventi.push({ tipo: tipo, data: new Date().toISOString() });
-      setEventi(eventi);
-      aggiornaContatori();
-      document.getElementById('feedback').textContent = `Evento "${tipo}" salvato!`;
-      setTimeout(() => document.getElementById('feedback').textContent = '', 2000);
-    }
-
-    function aggiornaContatori() {
-      const eventi = getEventi();
-      const oggi = new Date().toISOString().split('T')[0];
-      let poppate = 0, ninne = 0;
-      eventi.forEach(ev => {
-        if (ev.data.startsWith(oggi)) {
-          if (ev.tipo === 'poppata') poppate++;
-          if (ev.tipo === 'ninna') ninne++;
-        }
-      });
-      document.getElementById('contatorePoppata').textContent = poppate;
-      document.getElementById('contatoreNinna').textContent = ninne;
-    }
-
-    function mostraEventi() {
-      const eventi = getEventi().sort((a, b) => new Date(b.data) - new Date(a.data));
-      const filtro = document.getElementById('filtroData').value;
-      const tabella = document.getElementById('tabellaEventi');
-      tabella.innerHTML = '';
-      eventi.filter(ev => !filtro || ev.data.startsWith(filtro)).forEach((ev, index) => {
-        const data = new Date(ev.data);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="border px-2 py-2">${escapeHTML(ev.tipo)}</td>
-          <td class="border px-2 py-2">${data.toLocaleDateString()}</td>
-          <td class="border px-2 py-2">${data.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-          <td class="border px-2 py-2">
-            <button onclick="eliminaEvento(${index})" class="text-red-500">Elimina</button>
-          </td>
-        `;
-        tabella.appendChild(tr);
-      });
-    }
-
-    function eliminaEvento(index) {
-      if (confirm('Sei sicuro di voler eliminare questo evento?')) {
-        const eventi = getEventi();
-        eventi.splice(index, 1);
-        setEventi(eventi);
-        mostraEventi();
-        aggiornaContatori();
-      }
-    }
-
-    function resetStorico() {
-      if (confirm('Sei sicuro di voler cancellare tutto lo storico?')) {
-        localStorage.removeItem('eventiBimbo');
-        mostraEventi();
-        aggiornaContatori();
-      }
-    }
-
-    aggiornaContatori();
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
-
-</body>
+    </div>
+  </body>
 </html>
