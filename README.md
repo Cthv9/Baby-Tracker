@@ -37,7 +37,18 @@ npm run preview  # anteprima del build
 
 ## Deploy
 
-Il build di produzione viene generato in `vite-project/dist/`. Per il deploy è sufficiente servire quella cartella come root del sito (GitHub Pages, Netlify, etc.).
+Il build di produzione viene generato nella cartella `/docs` nella root del repo (configurato in `vite.config.js`).
+
+**GitHub Pages:** nelle impostazioni del repo seleziona **Branch → `main` / `claude/...`** e cartella **`/docs`** — nessuna configurazione aggiuntiva necessaria.
+
+Per rigenerare il build dopo modifiche:
+
+```bash
+cd vite-project
+npm run build   # aggiorna automaticamente /docs
+```
+
+Poi commit e push della cartella `docs/`.
 
 ## Migrazione
 
