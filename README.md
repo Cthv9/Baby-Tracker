@@ -37,18 +37,18 @@ npm run preview  # anteprima del build
 
 ## Deploy
 
-Il build di produzione viene generato nella cartella `/docs` nella root del repo (configurato in `vite.config.js`).
+Il build di produzione viene generato direttamente nella **root del repo** (configurato in `vite.config.js`).
 
-**GitHub Pages:** nelle impostazioni del repo seleziona **Branch → `main` / `claude/...`** e cartella **`/docs`** — nessuna configurazione aggiuntiva necessaria.
+**GitHub Pages:** nelle impostazioni del repo seleziona **Branch → `main`** e cartella **`/ (root)`** — nessuna configurazione aggiuntiva necessaria.
 
 Per rigenerare il build dopo modifiche:
 
 ```bash
 cd vite-project
-npm run build   # aggiorna automaticamente /docs
+npm run build   # sovrascrive index.html e assets/ nella root
 ```
 
-Poi commit e push della cartella `docs/`.
+Poi commit e push.
 
 ## Migrazione
 

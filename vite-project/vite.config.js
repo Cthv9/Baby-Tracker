@@ -3,8 +3,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   build: {
-    outDir: '../docs',
-    emptyOutDir: true,
+    outDir: '../',
+    emptyOutDir: false,
   },
   plugins: [
     VitePWA({
