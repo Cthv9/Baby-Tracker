@@ -52,9 +52,9 @@ async function boot() {
     });
   });
 
-  // Register service worker
+  // Register service worker (base path handled by registerSW.js from vite-plugin-pwa)
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/Baby-Tracker/sw.js', { scope: '/Baby-Tracker/' }).catch(() => {});
   }
 }
 

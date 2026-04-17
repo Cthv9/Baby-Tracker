@@ -1,5 +1,7 @@
 # Baby Tracker 👶
 
+**[Apri l'app → https://cthv9.github.io/Baby-Tracker/](https://cthv9.github.io/Baby-Tracker/)**
+
 App PWA per tracciare le attività del neonato: poppate, nanna, pannolini, visite mediche e molto altro — tutto salvato localmente sul dispositivo.
 
 ## Funzionalità
@@ -37,9 +39,11 @@ npm run preview  # anteprima del build
 
 ## Deploy
 
-Il build di produzione viene generato direttamente nella **root del repo** (configurato in `vite.config.js`).
+L'app è pubblicata su **GitHub Pages**: [https://cthv9.github.io/Baby-Tracker/](https://cthv9.github.io/Baby-Tracker/)
 
-**GitHub Pages:** nelle impostazioni del repo seleziona **Branch → `main`** e cartella **`/ (root)`** — nessuna configurazione aggiuntiva necessaria.
+Il build di produzione viene generato direttamente nella **root del repo** (configurato in `vite.config.js`). La `base` è impostata su `/Baby-Tracker/` per compatibilità con GitHub Pages.
+
+**Configurazione GitHub Pages:** nel repo seleziona **Settings → Pages → Branch → `main`** e cartella **`/ (root)`**.
 
 Per rigenerare il build dopo modifiche:
 
